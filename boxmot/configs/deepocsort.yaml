@@ -1,0 +1,17 @@
+# Trial number:      0
+# HOTA, MOTA, IDF1:  [27.884, 11.425, 21.545]
+alpha_fixed_emb: 0.9217945107294758
+asso_func: iou
+aw_off: true
+aw_param: 0.431336052467765
+cmc_off: true
+conf: 0.48508903612389126
+delta_t: 3
+det_thresh: 0
+embedding_off: false  # ReID is enabled
+inertia: 0.11282583500843651
+iou_thresh: 0.1  # Lower threshold = more lenient matching during occlusions
+max_age: 300  # INCREASED: Keep tracks alive for 300 frames (~10 seconds) to prevent premature deletion
+min_hits: 1  # Confirm tracks immediately to avoid losing them
+new_kf_off: false
+w_association_emb: 0.85  # Increase ReID weight for better appearance matching during occlusions

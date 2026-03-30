@@ -1,0 +1,5 @@
+Collecting numpy
+  Using cached numpy-2.4.3-cp311-cp311-win_amd64.whl.metadata (6.6 kB)
+Using cached numpy-2.4.3-cp311-cp311-win_amd64.whl (12.6 MB)
+Installing collected packages: numpy
+Successfully installed numpy-2.4.3

@@ -1,0 +1,10 @@
+ecc: true
+ema_alpha: 0.9  # Smooth feature updates
+max_age: 100  # Keep tracks alive longer during occlusions
+max_dist: 0.3  # More lenient appearance matching
+max_iou_dist: 0.7  # More lenient IoU matching
+max_unmatched_preds: 7  # Allow predictions without matches
+mc_lambda: 0.995
+n_init: 1  # Confirm tracks immediately
+nn_budget: 100
+conf_thres: 0.3  # Lower confidence to detect more

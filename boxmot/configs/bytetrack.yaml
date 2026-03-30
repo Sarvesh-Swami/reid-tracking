@@ -1,0 +1,5 @@
+track_thresh: 0.1  # Very low - accept weak detections
+track_buffer: 300  # Keep tracks for 300 frames (10 seconds at 30fps)
+match_thresh: 0.95  # Very high - very lenient matching
+frame_rate: 30
+conf_thres: 0.2  # Low confidence threshold

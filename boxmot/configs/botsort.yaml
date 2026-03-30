@@ -1,0 +1,11 @@
+# Optimized for long-term re-identification
+appearance_thresh: 0.7  # More lenient appearance matching
+cmc_method: sparseOptFlow
+conf_thres: 0.3
+frame_rate: 30
+lambda_: 0.98  # Balance between appearance and motion
+match_thresh: 0.9  # Very lenient IoU matching
+new_track_thresh: 0.3
+proximity_thresh: 0.7
+track_buffer: 300  # Keep tracks for 300 frames (10 seconds)
+track_high_thresh: 0.4
