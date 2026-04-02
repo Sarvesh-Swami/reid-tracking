@@ -15,6 +15,7 @@ __tr = TestRequirements()
 __tr.check_packages(('ultralytics==8.0.124',))  # install
 
 from ultralytics.yolo.engine.model import YOLO, TASK_MAP
+from ultralytics.nn.tasks import DetectionModel
 
 from ultralytics.yolo.utils import colorstr, ops, IterableSimpleNamespace
 from ultralytics.yolo.utils.checks import check_imgsz
@@ -28,6 +29,13 @@ from utils import write_MOT_results
 
 from boxmot.utils import EXAMPLES
 
+
+# Handle torch.serialization.add_safe_globals for PyTorch 2.6+
+try:
+    torch.serialization.add_safe_globals([DetectionModel])
+except AttributeError:
+    # add_safe_globals not available in PyTorch < 2.6
+    pass
 
 def on_predict_start(predictor):
     predictor.trackers = []

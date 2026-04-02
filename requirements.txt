@@ -1,9 +1,9 @@
 # base -------------------------------------------------------------------------
-torch>=1.7.0
-torchvision>=0.8.1
-numpy>=1.23.1           # otherwise issues with track eval
+torch>=2.2.0,<2.3.0
+torchvision>=0.17.0,<0.18.0
+numpy<2                 # avoid NumPy 2.x incompatibility with compiled modules
 loguru>=0.7.0
-opencv-python>=4.6.0
+opencv-python>=4.8.0,<4.9.0  # compatible with numpy 1.x
 PyYAML>=5.3.1           # read tracker configs
 pandas>=1.1.4           # export matrix
 gdown>=4.7.1            # google drive model download
