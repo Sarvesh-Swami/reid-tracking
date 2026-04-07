@@ -44,6 +44,8 @@ class ReIDDetectMultiBackend(nn.Module):
         super().__init__()
 
         w = weights[0] if isinstance(weights, list) else weights
+        # Ensure w is a Path object
+        w = Path(w) if not isinstance(w, Path) else w
         (
             self.pt,
             self.jit,

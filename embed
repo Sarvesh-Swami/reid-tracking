@@ -1,0 +1,733 @@
+======================================================================
+EMBEDDING DISTANCE ANALYSIS
+======================================================================
+
+Loading: output_v3_embeddings.npz
+Loading: output_v3_metadata.json
+
+Total embeddings: 1505
+Unique persons: 13
+
+======================================================================
+INTRA-PERSON DISTANCES (Same Person)
+======================================================================
+
+Person 1: 445 embeddings, 98790 pairs
+  Min distance:  0.0044
+  Max distance:  0.6565
+  Mean distance: 0.1838
+  Std distance:  0.0783
+  Median:        0.1791
+  25th percentile: 0.1318
+  75th percentile: 0.2227
+
+Person 2: 144 embeddings, 10296 pairs
+  Min distance:  0.0063
+  Max distance:  0.6853
+  Mean distance: 0.2765
+  Std distance:  0.1598
+  Median:        0.2358
+  25th percentile: 0.1397
+  75th percentile: 0.4310
+
+Person 3: 188 embeddings, 17578 pairs
+  Min distance:  0.0102
+  Max distance:  0.7992
+  Mean distance: 0.3483
+  Std distance:  0.1700
+  Median:        0.3265
+  25th percentile: 0.2080
+  75th percentile: 0.4770
+
+Person 4: 101 embeddings, 5050 pairs
+  Min distance:  0.0136
+  Max distance:  0.7529
+  Mean distance: 0.2934
+  Std distance:  0.1652
+  Median:        0.2401
+  25th percentile: 0.1627
+  75th percentile: 0.4329
+
+Person 5: 11 embeddings, 55 pairs
+  Min distance:  0.0174
+  Max distance:  0.1495
+  Mean distance: 0.0819
+  Std distance:  0.0337
+  Median:        0.0841
+  25th percentile: 0.0550
+  75th percentile: 0.1066
+
+Person 6: 64 embeddings, 2016 pairs
+  Min distance:  0.0052
+  Max distance:  0.5771
+  Mean distance: 0.1280
+  Std distance:  0.1067
+  Median:        0.0975
+  25th percentile: 0.0581
+  75th percentile: 0.1534
+
+Person 7: 66 embeddings, 2145 pairs
+  Min distance:  0.0219
+  Max distance:  0.6602
+  Mean distance: 0.3440
+  Std distance:  0.1562
+  Median:        0.3332
+  25th percentile: 0.2208
+  75th percentile: 0.4798
+
+Person 8: 73 embeddings, 2628 pairs
+  Min distance:  0.0218
+  Max distance:  0.6609
+  Mean distance: 0.3230
+  Std distance:  0.1232
+  Median:        0.3350
+  25th percentile: 0.2405
+  75th percentile: 0.4043
+
+Person 9: 5 embeddings, 10 pairs
+  Min distance:  0.0855
+  Max distance:  0.4168
+  Mean distance: 0.2434
+  Std distance:  0.1039
+  Median:        0.2312
+  25th percentile: 0.1574
+  75th percentile: 0.3201
+
+Person 10: 132 embeddings, 8646 pairs
+  Min distance:  0.0060
+  Max distance:  0.5118
+  Mean distance: 0.1962
+  Std distance:  0.0933
+  Median:        0.1897
+  25th percentile: 0.1272
+  75th percentile: 0.2544
+
+Person 11: 87 embeddings, 3741 pairs
+  Min distance:  0.0135
+  Max distance:  0.6109
+  Mean distance: 0.2170
+  Std distance:  0.0923
+  Median:        0.2138
+  25th percentile: 0.1647
+  75th percentile: 0.2608
+
+Person 12: 81 embeddings, 3240 pairs
+  Min distance:  0.0131
+  Max distance:  0.7987
+  Mean distance: 0.2221
+  Std distance:  0.1663
+  Median:        0.1600
+  25th percentile: 0.1177
+  75th percentile: 0.2527
+
+Person 13: 108 embeddings, 5778 pairs
+  Min distance:  0.0202
+  Max distance:  0.7387
+  Mean distance: 0.3620
+  Std distance:  0.1272
+  Median:        0.3709
+  25th percentile: 0.2815
+  75th percentile: 0.4467
+
+======================================================================
+INTER-PERSON DISTANCES (Different Persons)
+======================================================================
+
+Person 1 vs Person 2: 64080 pairs
+  Min distance:  0.5210
+  Max distance:  0.8238
+  Mean distance: 0.7143
+  Std distance:  0.0373
+  Median:        0.7182
+
+Person 1 vs Person 3: 83660 pairs
+  Min distance:  0.3462
+  Max distance:  0.8449
+  Mean distance: 0.7125
+  Std distance:  0.0529
+  Median:        0.7201
+
+Person 1 vs Person 4: 44945 pairs
+  Min distance:  0.4632
+  Max distance:  0.8455
+  Mean distance: 0.7065
+  Std distance:  0.0546
+  Median:        0.7099
+
+Person 1 vs Person 5: 4895 pairs
+  Min distance:  0.5370
+  Max distance:  0.7732
+  Mean distance: 0.6824
+  Std distance:  0.0303
+  Median:        0.6838
+
+Person 1 vs Person 6: 28480 pairs
+  Min distance:  0.5167
+  Max distance:  0.8439
+  Mean distance: 0.7640
+  Std distance:  0.0328
+  Median:        0.7679
+
+Person 1 vs Person 7: 29370 pairs
+  Min distance:  0.4286
+  Max distance:  0.8536
+  Mean distance: 0.7126
+  Std distance:  0.0610
+  Median:        0.7263
+
+Person 1 vs Person 8: 32485 pairs
+  Min distance:  0.3874
+  Max distance:  0.8463
+  Mean distance: 0.7091
+  Std distance:  0.0580
+  Median:        0.7201
+
+Person 1 vs Person 9: 2225 pairs
+  Min distance:  0.2242
+  Max distance:  0.6926
+  Mean distance: 0.5024
+  Std distance:  0.1062
+  Median:        0.5294
+
+Person 1 vs Person 10: 58740 pairs
+  Min distance:  0.5827
+  Max distance:  0.8363
+  Mean distance: 0.7172
+  Std distance:  0.0322
+  Median:        0.7176
+
+Person 1 vs Person 11: 38715 pairs
+  Min distance:  0.2232
+  Max distance:  0.7039
+  Mean distance: 0.5291
+  Std distance:  0.0665
+  Median:        0.5363
+
+Person 1 vs Person 12: 36045 pairs
+  Min distance:  0.2198
+  Max distance:  0.8364
+  Mean distance: 0.6917
+  Std distance:  0.1084
+  Median:        0.7224
+
+Person 1 vs Person 13: 48060 pairs
+  Min distance:  0.5373
+  Max distance:  0.8391
+  Mean distance: 0.7155
+  Std distance:  0.0430
+  Median:        0.7196
+
+Person 2 vs Person 3: 27072 pairs
+  Min distance:  0.1845
+  Max distance:  0.7796
+  Mean distance: 0.5522
+  Std distance:  0.0859
+  Median:        0.5532
+
+Person 2 vs Person 4: 14544 pairs
+  Min distance:  0.3777
+  Max distance:  0.7520
+  Mean distance: 0.5758
+  Std distance:  0.0621
+  Median:        0.5796
+
+Person 2 vs Person 5: 1584 pairs
+  Min distance:  0.4093
+  Max distance:  0.7125
+  Mean distance: 0.5852
+  Std distance:  0.0462
+  Median:        0.5868
+
+Person 2 vs Person 6: 9216 pairs
+  Min distance:  0.1835
+  Max distance:  0.7772
+  Mean distance: 0.4271
+  Std distance:  0.1173
+  Median:        0.4170
+
+Person 2 vs Person 7: 9504 pairs
+  Min distance:  0.2896
+  Max distance:  0.8345
+  Mean distance: 0.6223
+  Std distance:  0.0640
+  Median:        0.6147
+
+Person 2 vs Person 8: 10512 pairs
+  Min distance:  0.4082
+  Max distance:  0.7864
+  Mean distance: 0.6483
+  Std distance:  0.0524
+  Median:        0.6538
+
+Person 2 vs Person 9: 720 pairs
+  Min distance:  0.5146
+  Max distance:  0.7929
+  Mean distance: 0.6888
+  Std distance:  0.0528
+  Median:        0.6877
+
+Person 2 vs Person 10: 19008 pairs
+  Min distance:  0.0484
+  Max distance:  0.6725
+  Mean distance: 0.2510
+  Std distance:  0.1301
+  Median:        0.2060
+
+Person 2 vs Person 11: 12528 pairs
+  Min distance:  0.4096
+  Max distance:  0.7692
+  Mean distance: 0.6328
+  Std distance:  0.0516
+  Median:        0.6368
+
+Person 2 vs Person 12: 11664 pairs
+  Min distance:  0.3502
+  Max distance:  0.7797
+  Mean distance: 0.5876
+  Std distance:  0.0537
+  Median:        0.5866
+
+Person 2 vs Person 13: 15552 pairs
+  Min distance:  0.3068
+  Max distance:  0.8481
+  Mean distance: 0.5249
+  Std distance:  0.0862
+  Median:        0.5163
+
+Person 3 vs Person 4: 18988 pairs
+  Min distance:  0.2353
+  Max distance:  0.7634
+  Mean distance: 0.4861
+  Std distance:  0.0807
+  Median:        0.4777
+
+Person 3 vs Person 5: 2068 pairs
+  Min distance:  0.2695
+  Max distance:  0.7103
+  Mean distance: 0.4381
+  Std distance:  0.0766
+  Median:        0.4237
+
+Person 3 vs Person 6: 12032 pairs
+  Min distance:  0.3359
+  Max distance:  0.8210
+  Mean distance: 0.6684
+  Std distance:  0.0614
+  Median:        0.6779
+
+Person 3 vs Person 7: 12408 pairs
+  Min distance:  0.1677
+  Max distance:  0.7839
+  Mean distance: 0.4377
+  Std distance:  0.1287
+  Median:        0.4232
+
+Person 3 vs Person 8: 13724 pairs
+  Min distance:  0.2136
+  Max distance:  0.7825
+  Mean distance: 0.5252
+  Std distance:  0.0868
+  Median:        0.5300
+
+Person 3 vs Person 9: 940 pairs
+  Min distance:  0.4804
+  Max distance:  0.7701
+  Mean distance: 0.6368
+  Std distance:  0.0510
+  Median:        0.6403
+
+Person 3 vs Person 10: 24816 pairs
+  Min distance:  0.2370
+  Max distance:  0.7607
+  Mean distance: 0.5443
+  Std distance:  0.0854
+  Median:        0.5436
+
+Person 3 vs Person 11: 16356 pairs
+  Min distance:  0.3031
+  Max distance:  0.7546
+  Mean distance: 0.5200
+  Std distance:  0.0840
+  Median:        0.5140
+
+Person 3 vs Person 12: 15228 pairs
+  Min distance:  0.1291
+  Max distance:  0.7727
+  Mean distance: 0.3589
+  Std distance:  0.1466
+  Median:        0.3150
+
+Person 3 vs Person 13: 20304 pairs
+  Min distance:  0.1282
+  Max distance:  0.7808
+  Mean distance: 0.4286
+  Std distance:  0.1093
+  Median:        0.4231
+
+Person 4 vs Person 5: 1111 pairs
+  Min distance:  0.0921
+  Max distance:  0.6146
+  Mean distance: 0.2650
+  Std distance:  0.1130
+  Median:        0.2347
+
+Person 4 vs Person 6: 6464 pairs
+  Min distance:  0.4330
+  Max distance:  0.7502
+  Mean distance: 0.6534
+  Std distance:  0.0465
+  Median:        0.6642
+
+Person 4 vs Person 7: 6666 pairs
+  Min distance:  0.2920
+  Max distance:  0.7383
+  Mean distance: 0.5295
+  Std distance:  0.0667
+  Median:        0.5265
+
+Person 4 vs Person 8: 7373 pairs
+  Min distance:  0.1977
+  Max distance:  0.7851
+  Mean distance: 0.4302
+  Std distance:  0.1114
+  Median:        0.4118
+
+Person 4 vs Person 9: 505 pairs
+  Min distance:  0.4222
+  Max distance:  0.7410
+  Mean distance: 0.5949
+  Std distance:  0.0842
+  Median:        0.6246
+
+Person 4 vs Person 10: 13332 pairs
+  Min distance:  0.3463
+  Max distance:  0.7393
+  Mean distance: 0.5664
+  Std distance:  0.0640
+  Median:        0.5685
+
+Person 4 vs Person 11: 8787 pairs
+  Min distance:  0.2634
+  Max distance:  0.7114
+  Mean distance: 0.4659
+  Std distance:  0.0770
+  Median:        0.4597
+
+Person 4 vs Person 12: 8181 pairs
+  Min distance:  0.2819
+  Max distance:  0.7501
+  Mean distance: 0.5001
+  Std distance:  0.0624
+  Median:        0.4978
+
+Person 4 vs Person 13: 10908 pairs
+  Min distance:  0.1685
+  Max distance:  0.6955
+  Mean distance: 0.4196
+  Std distance:  0.0853
+  Median:        0.4169
+
+Person 5 vs Person 6: 704 pairs
+  Min distance:  0.4701
+  Max distance:  0.7627
+  Mean distance: 0.6866
+  Std distance:  0.0472
+  Median:        0.6972
+
+Person 5 vs Person 7: 726 pairs
+  Min distance:  0.3336
+  Max distance:  0.6583
+  Mean distance: 0.4747
+  Std distance:  0.0626
+  Median:        0.4667
+
+Person 5 vs Person 8: 803 pairs
+  Min distance:  0.2169
+  Max distance:  0.6202
+  Mean distance: 0.4061
+  Std distance:  0.0778
+  Median:        0.4014
+
+Person 5 vs Person 9: 55 pairs
+  Min distance:  0.4378
+  Max distance:  0.7127
+  Mean distance: 0.5911
+  Std distance:  0.0849
+  Median:        0.6234
+
+Person 5 vs Person 10: 1452 pairs
+  Min distance:  0.4233
+  Max distance:  0.7160
+  Mean distance: 0.5900
+  Std distance:  0.0479
+  Median:        0.5932
+
+Person 5 vs Person 11: 957 pairs
+  Min distance:  0.2989
+  Max distance:  0.6027
+  Mean distance: 0.4325
+  Std distance:  0.0523
+  Median:        0.4326
+
+Person 5 vs Person 12: 891 pairs
+  Min distance:  0.3247
+  Max distance:  0.6933
+  Mean distance: 0.4462
+  Std distance:  0.0547
+  Median:        0.4406
+
+Person 5 vs Person 13: 1188 pairs
+  Min distance:  0.2213
+  Max distance:  0.6529
+  Mean distance: 0.3972
+  Std distance:  0.0619
+  Median:        0.3917
+
+Person 6 vs Person 7: 4224 pairs
+  Min distance:  0.3495
+  Max distance:  0.7753
+  Mean distance: 0.6535
+  Std distance:  0.0537
+  Median:        0.6523
+
+Person 6 vs Person 8: 4672 pairs
+  Min distance:  0.4248
+  Max distance:  0.7895
+  Mean distance: 0.6367
+  Std distance:  0.0575
+  Median:        0.6409
+
+Person 6 vs Person 9: 320 pairs
+  Min distance:  0.5347
+  Max distance:  0.8158
+  Mean distance: 0.6932
+  Std distance:  0.0625
+  Median:        0.6860
+
+Person 6 vs Person 10: 8448 pairs
+  Min distance:  0.1179
+  Max distance:  0.6565
+  Mean distance: 0.3745
+  Std distance:  0.0918
+  Median:        0.3706
+
+Person 6 vs Person 11: 5568 pairs
+  Min distance:  0.4789
+  Max distance:  0.8161
+  Mean distance: 0.7201
+  Std distance:  0.0469
+  Median:        0.7256
+
+Person 6 vs Person 12: 5184 pairs
+  Min distance:  0.4587
+  Max distance:  0.7947
+  Mean distance: 0.6700
+  Std distance:  0.0461
+  Median:        0.6688
+
+Person 6 vs Person 13: 6912 pairs
+  Min distance:  0.3521
+  Max distance:  0.8308
+  Mean distance: 0.6427
+  Std distance:  0.0602
+  Median:        0.6442
+
+Person 7 vs Person 8: 4818 pairs
+  Min distance:  0.2431
+  Max distance:  0.7551
+  Mean distance: 0.5022
+  Std distance:  0.0900
+  Median:        0.5083
+
+Person 7 vs Person 9: 330 pairs
+  Min distance:  0.3977
+  Max distance:  0.7196
+  Mean distance: 0.5905
+  Std distance:  0.0606
+  Median:        0.5944
+
+Person 7 vs Person 10: 8712 pairs
+  Min distance:  0.4179
+  Max distance:  0.8226
+  Mean distance: 0.6104
+  Std distance:  0.0644
+  Median:        0.6056
+
+Person 7 vs Person 11: 5742 pairs
+  Min distance:  0.3567
+  Max distance:  0.7277
+  Mean distance: 0.5422
+  Std distance:  0.0629
+  Median:        0.5388
+
+Person 7 vs Person 12: 5346 pairs
+  Min distance:  0.1897
+  Max distance:  0.7737
+  Mean distance: 0.3945
+  Std distance:  0.1313
+  Median:        0.3515
+
+Person 7 vs Person 13: 7128 pairs
+  Min distance:  0.2278
+  Max distance:  0.7768
+  Mean distance: 0.4888
+  Std distance:  0.0980
+  Median:        0.4798
+
+Person 8 vs Person 9: 365 pairs
+  Min distance:  0.0376
+  Max distance:  0.7102
+  Mean distance: 0.4871
+  Std distance:  0.1361
+  Median:        0.5121
+
+Person 8 vs Person 10: 9636 pairs
+  Min distance:  0.4399
+  Max distance:  0.7960
+  Mean distance: 0.6449
+  Std distance:  0.0541
+  Median:        0.6513
+
+Person 8 vs Person 11: 6351 pairs
+  Min distance:  0.2594
+  Max distance:  0.7437
+  Mean distance: 0.4908
+  Std distance:  0.0731
+  Median:        0.4897
+
+Person 8 vs Person 12: 5913 pairs
+  Min distance:  0.2536
+  Max distance:  0.7512
+  Mean distance: 0.5288
+  Std distance:  0.0782
+  Median:        0.5351
+
+Person 8 vs Person 13: 7884 pairs
+  Min distance:  0.2822
+  Max distance:  0.7440
+  Mean distance: 0.5099
+  Std distance:  0.0718
+  Median:        0.5106
+
+Person 9 vs Person 10: 660 pairs
+  Min distance:  0.5308
+  Max distance:  0.7934
+  Mean distance: 0.6827
+  Std distance:  0.0518
+  Median:        0.6808
+
+Person 9 vs Person 11: 435 pairs
+  Min distance:  0.3181
+  Max distance:  0.6118
+  Mean distance: 0.4371
+  Std distance:  0.0687
+  Median:        0.4308
+
+Person 9 vs Person 12: 405 pairs
+  Min distance:  0.3734
+  Max distance:  0.7000
+  Mean distance: 0.5919
+  Std distance:  0.0643
+  Median:        0.6113
+
+Person 9 vs Person 13: 540 pairs
+  Min distance:  0.4677
+  Max distance:  0.7653
+  Mean distance: 0.6187
+  Std distance:  0.0638
+  Median:        0.6151
+
+Person 10 vs Person 11: 11484 pairs
+  Min distance:  0.4090
+  Max distance:  0.7869
+  Mean distance: 0.6348
+  Std distance:  0.0506
+  Median:        0.6380
+
+Person 10 vs Person 12: 10692 pairs
+  Min distance:  0.3850
+  Max distance:  0.7628
+  Mean distance: 0.5727
+  Std distance:  0.0525
+  Median:        0.5743
+
+Person 10 vs Person 13: 14256 pairs
+  Min distance:  0.3013
+  Max distance:  0.8493
+  Mean distance: 0.5142
+  Std distance:  0.0834
+  Median:        0.5024
+
+Person 11 vs Person 12: 7047 pairs
+  Min distance:  0.2235
+  Max distance:  0.6871
+  Mean distance: 0.4442
+  Std distance:  0.0773
+  Median:        0.4360
+
+Person 11 vs Person 13: 9396 pairs
+  Min distance:  0.2270
+  Max distance:  0.7850
+  Mean distance: 0.4873
+  Std distance:  0.0741
+  Median:        0.4839
+
+Person 12 vs Person 13: 8748 pairs
+  Min distance:  0.1545
+  Max distance:  0.7634
+  Mean distance: 0.4223
+  Std distance:  0.1172
+  Median:        0.4238
+
+======================================================================
+SUMMARY STATISTICS
+======================================================================
+
+All INTRA-person distances (same person):
+  Count: 159973
+  Min:    0.0044
+  Max:    0.7992
+  Mean:   0.2236
+  Median: 0.1940
+  Std:    0.1274
+
+All INTER-person distances (different persons):
+  Count: 971787
+  Min:    0.0376
+  Max:    0.8536
+  Mean:   0.6059
+  Median: 0.6426
+  Std:    0.1407
+
+======================================================================
+THRESHOLD RECOMMENDATIONS
+======================================================================
+
+Intra-person 95th percentile: 0.4998
+  (95% of same-person pairs have distance < 0.4998)
+
+Inter-person 5th percentile: 0.3354
+  (5% of different-person pairs have distance < 0.3354)
+
+⚠ Poor separation! Intra-95% (0.4998) >= Inter-5% (0.3354)
+  Same-person and different-person distances overlap significantly
+  This explains why the system creates multiple IDs
+
+  Compromise threshold: 0.4176
+  Warning: This will have false positives and/or false negatives
+
+Current reid_threshold: 0.3500
+  Same-person pairs rejected: 23774/159973 (14.9%)
+  Different-person pairs accepted: 55812/971787 (5.7%)
+
+  ⚠ 23774 same-person pairs are being rejected!
+     This causes the system to create new IDs for the same person
+
+  ⚠ 55812 different-person pairs would be accepted!
+     This could cause wrong ID assignments
+
+======================================================================
+ANALYSIS COMPLETE
+======================================================================
+
+(venv) C:\Users\sarve\Documents\repo\Yolov5_StrongSORT_OSNet\Yolov5_StrongSORT_OSNet>

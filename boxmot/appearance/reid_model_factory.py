@@ -92,8 +92,10 @@ def is_model_in_model_types(model):
 
 
 def get_model_name(model):
+    # Handle both Path objects and strings
+    model_str = str(model.name) if hasattr(model, 'name') else str(model)
     for x in __model_types:
-        if x in model.name:
+        if x in model_str:
             return x
     return None
 

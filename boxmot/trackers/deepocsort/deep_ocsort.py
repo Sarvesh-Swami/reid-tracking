@@ -358,9 +358,10 @@ class DeepOCSort(object):
         self.aw_off = aw_off
         self.new_kf_off = new_kf_off
         
-        # PERSISTENT REID: Store embeddings for all tracks ever seen
-        self.persistent_embeddings = {}  # {track_id: embedding}
+        # PERSISTENT REID: Store MULTIPLE embeddings per track (different poses/angles)
+        self.persistent_embeddings = {}  # {track_id: [emb1, emb2, emb3, ...]}
         self.deleted_track_ids = set()  # Track IDs that are currently inactive
+        self.max_embeddings_per_id = 10  # Store up to 10 different embeddings per person
 
     @PerClassDecorator
     def update(self, dets, img, tag='blub'):
@@ -510,7 +511,7 @@ class DeepOCSort(object):
         for i in unmatched_dets:
             # PERSISTENT REID: Check if this detection matches a deleted ID
             if not self.embedding_off and len(self.deleted_track_ids) > 0:
-                matched_id, distance = self._find_matching_deleted_id(dets_embs[i], threshold=0.25)  # STRICTER: 0.25 instead of 0.5
+                matched_id, distance = self._find_matching_deleted_id(dets_embs[i], threshold=0.35)  # Multi-embedding: can use higher threshold
                 
                 if matched_id is not None:
                     import sys
@@ -712,6 +713,9 @@ class DeepOCSort(object):
     def _find_matching_deleted_id(self, embedding, threshold=0.5):
         """Find the best matching deleted ID for a given embedding.
         
+        Uses MINIMUM distance across ALL stored embeddings for each ID.
+        This handles pose/angle variations by matching against multiple views.
+        
         Parameters
         ----------
         embedding : ndarray
@@ -740,23 +744,30 @@ class DeepOCSort(object):
         
         for track_id in self.deleted_track_ids:
             if track_id in self.persistent_embeddings:
-                # Get stored embedding
-                stored_emb = self.persistent_embeddings[track_id]
+                # Get ALL stored embeddings for this ID
+                stored_embeddings = self.persistent_embeddings[track_id]
                 
-                # Ensure stored embedding is 1D numpy array
-                if isinstance(stored_emb, torch.Tensor):
-                    stored_emb = stored_emb.cpu().numpy()
-                stored_emb = np.asarray(stored_emb).flatten()
+                # Compute distance to ALL embeddings, use MINIMUM
+                min_distance = float('inf')
+                for stored_emb in stored_embeddings:
+                    # Ensure stored embedding is 1D numpy array
+                    if isinstance(stored_emb, torch.Tensor):
+                        stored_emb = stored_emb.cpu().numpy()
+                    stored_emb = np.asarray(stored_emb).flatten()
+                    
+                    # Normalize stored embedding
+                    stored_emb_norm = stored_emb / (np.linalg.norm(stored_emb) + 1e-8)
+                    
+                    # Compute cosine distance
+                    similarity = np.dot(embedding_norm, stored_emb_norm)
+                    distance = 1.0 - similarity
+                    
+                    if distance < min_distance:
+                        min_distance = distance
                 
-                # Normalize stored embedding
-                stored_emb_norm = stored_emb / (np.linalg.norm(stored_emb) + 1e-8)
-                
-                # Compute cosine distance
-                similarity = np.dot(embedding_norm, stored_emb_norm)
-                distance = 1.0 - similarity
-                
-                if distance < best_distance:
-                    best_distance = distance
+                # Use minimum distance across all embeddings
+                if min_distance < best_distance:
+                    best_distance = min_distance
                     best_id = track_id
         
         if best_distance < threshold:
@@ -778,6 +789,8 @@ class DeepOCSort(object):
     def _store_persistent_embedding(self, track_id, embedding):
         """Store embedding for a track in persistent storage.
         
+        Stores MULTIPLE embeddings per person to handle pose/angle variations.
+        
         Parameters
         ----------
         track_id : int
@@ -792,7 +805,22 @@ class DeepOCSort(object):
         
         # Normalize and store
         embedding_norm = embedding / (np.linalg.norm(embedding) + 1e-8)
-        self.persistent_embeddings[track_id] = embedding_norm
+        
+        # Initialize list if first embedding for this ID
+        if track_id not in self.persistent_embeddings:
+            self.persistent_embeddings[track_id] = []
+            print(f"🆕 NEW PERSON: ID {track_id} - First embedding stored (shape: {embedding_norm.shape})", flush=True)
+        
+        # Add embedding to list
+        self.persistent_embeddings[track_id].append(embedding_norm)
+        
+        # Keep only the most recent N embeddings (diverse poses)
+        if len(self.persistent_embeddings[track_id]) > self.max_embeddings_per_id:
+            self.persistent_embeddings[track_id] = self.persistent_embeddings[track_id][-self.max_embeddings_per_id:]
+        
+        # Debug: Show total embeddings stored
+        if len(self.persistent_embeddings[track_id]) % 3 == 0:  # Every 3rd embedding
+            print(f"📊 ID {track_id}: Now has {len(self.persistent_embeddings[track_id])} embeddings stored", flush=True)
     
     def _mark_track_deleted(self, track_id):
         """Mark a track as deleted (inactive).
