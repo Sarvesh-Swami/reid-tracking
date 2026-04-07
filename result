@@ -1,0 +1,239 @@
+(venv) C:\Users\sarve\Documents\repo\Yolov5_StrongSORT_OSNet\Yolov5_StrongSORT_OSNet>python track_attendance.py --source test_6.mp4 --reid-threshold 0.25 --color-weight 0.40 --output output_v4.mp4
+============================================================
+ATTENDANCE TRACKER v3
+============================================================
+Layer 1: BoTSORT (frame-to-frame tracking)
+Layer 2: Persistent Gallery (aggressive re-verification)
+  - EVERY frame verification against ALL gallery PIDs
+  - Automatic ID reassignment on better matches
+  - Gallery contamination guard (2-strike system)
+  - Failed-match avoidance (no retry of wrong PIDs)
+  - 2D H×S color histogram
+  - Faster probation & confirmation (3+3 frames)
+============================================================
+
+Video: 464x832 @ 30fps, 1302 frames
+2026-04-07 11:48:47.327 | SUCCESS  | boxmot.appearance.reid_model_factory:load_pretrained_weights:189 - Successfully loaded pretrained weights from "C:\Users\sarve\Documents\repo\Yolov5_StrongSORT_OSNet\Yolov5_StrongSORT_OSNet\examples\weights\osnet_x1_0_msmt17.pt"
+2026-04-07 11:48:47.327 | WARNING  | boxmot.appearance.reid_model_factory:load_pretrained_weights:193 - The following layers are discarded due to unmatched keys or layer size: ('classifier.weight', 'classifier.bias')
+C:\Users\sarve\Documents\repo\Yolov5_StrongSORT_OSNet\venv\lib\site-packages\torch\cuda\__init__.py:173: UserWarning:
+NVIDIA GeForce RTX 5050 Laptop GPU with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_37 sm_50 sm_60 sm_61 sm_70 sm_75 sm_80 sm_86 sm_90 compute_37.
+If you want to use the NVIDIA GeForce RTX 5050 Laptop GPU GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(incompatible_device_warn.format(device_name, capability, " ".join(arch_list), device_name))
+  Device: cuda:0
+  Track buffer: 150 frames (5.0s)
+  ReID threshold: 0.25
+  Color weight: 0.4
+  Probation: 3 frames
+  Confirmation: 3 frames
+  Gallery update: every 3 frames
+  Re-verification: every 1 frame(s)
+  Reassignment threshold: 0.1
+  Contamination guard: 2 strikes
+
+Processing...
+
+WARNING  NMS time limit 0.550s exceeded
+  [NEW] Frame 3: NEW Person 1
+  5% | Active: 1 | Unique: 1
+  9% | Active: 0 | Unique: 1
+  14% | Active: 0 | Unique: 1
+  [NEW] Frame 189: NEW Person 2
+  [NEW] Frame 220: NEW Person 3
+  18% | Active: 2 | Unique: 3
+  [NEW] Frame 267: NEW Person 4
+    [VERIFY FAIL] Track 7: Assigned Person 4 doesn't match (dist: 0.288 >= 0.25)
+    [VERIFY FAIL] Track 7: Assigned Person 4 doesn't match (dist: 0.281 >= 0.25)
+  [IDENTITY LOST] Frame 282: Track 7 lost identity of Person 4 (2 verification failures)
+    [UNMAP] Track 7 unmapped from Person 4
+  [TENTATIVE] Frame 284: Person 4 tentative match (dist: 0.235, color: 0.911, reid: 0.667)
+  [CONFIRMED] Frame 286: Person 4 RE-ID confirmed (dist: 0.244, color: 0.884)
+  23% | Active: 3 | Unique: 4
+  [NEW] Frame 302: NEW Person 5
+    [VERIFY FAIL] Track 2: Assigned Person 2 doesn't match (dist: 0.256 >= 0.25)
+    [VERIFY FAIL] Track 2: Assigned Person 2 doesn't match (dist: 0.253 >= 0.25)
+    [VERIFY FAIL] Track 2: Assigned Person 2 doesn't match (dist: 0.264 >= 0.25)
+    [VERIFY FAIL] Track 2: Assigned Person 2 doesn't match (dist: 0.268 >= 0.25)
+  [IDENTITY LOST] Frame 317: Track 2 lost identity of Person 2 (2 verification failures)
+    [UNMAP] Track 2 unmapped from Person 2
+  [NEW] Frame 319: NEW Person 6
+  28% | Active: 2 | Unique: 6
+    [VERIFY FAIL] Track 3: Assigned Person 3 doesn't match (dist: 0.411 >= 0.25)
+    [REASSIGN CANDIDATE] Track 3: Person 6 matches better (score diff: 0.112, dist: 0.299 vs 0.411)
+  [REASSIGNED] Frame 362: Track 3 reassigned from Person 3 to Person 6 (dist: 0.299)
+    [VERIFY FAIL] Track 3: Assigned Person 6 doesn't match (dist: 0.255 >= 0.25)
+    [VERIFY FAIL] Track 3: Assigned Person 6 doesn't match (dist: 0.260 >= 0.25)
+  [IDENTITY LOST] Frame 364: Track 3 lost identity of Person 6 (2 verification failures)
+    [UNMAP] Track 3 unmapped from Person 6
+  [NEW] Frame 366: NEW Person 7
+    [VERIFY FAIL] Track 3: Assigned Person 7 doesn't match (dist: 0.327 >= 0.25)
+    [VERIFY FAIL] Track 3: Assigned Person 7 doesn't match (dist: 0.389 >= 0.25)
+  [IDENTITY LOST] Frame 370: Track 3 lost identity of Person 7 (2 verification failures)
+    [UNMAP] Track 3 unmapped from Person 7
+  [TENTATIVE] Frame 372: Person 3 tentative match (dist: 0.220, color: 0.855, reid: 0.730)
+  [CONFIRMED] Frame 374: Person 3 RE-ID confirmed (dist: 0.200, color: 0.777)
+    [VERIFY FAIL] Track 3: Assigned Person 3 doesn't match (dist: 0.267 >= 0.25)
+    [VERIFY FAIL] Track 3: Assigned Person 3 doesn't match (dist: 0.256 >= 0.25)
+    [VERIFY FAIL] Track 3: Assigned Person 3 doesn't match (dist: 0.307 >= 0.25)
+  [IDENTITY LOST] Frame 393: Track 3 lost identity of Person 3 (2 verification failures)
+    [UNMAP] Track 3 unmapped from Person 3
+  [NEW] Frame 395: NEW Person 8
+    [VERIFY FAIL] Track 3: Assigned Person 8 doesn't match (dist: 0.251 >= 0.25)
+  32% | Active: 0 | Unique: 8
+  [NEW] Frame 439: NEW Person 9
+    [VERIFY FAIL] Track 14: Assigned Person 9 doesn't match (dist: 0.309 >= 0.25)
+    [VERIFY FAIL] Track 14: Assigned Person 9 doesn't match (dist: 0.490 >= 0.25)
+    [REASSIGN CANDIDATE] Track 14: Person 1 matches better (score diff: 0.344, dist: 0.146 vs 0.490)
+  [REASSIGNED] Frame 448: Track 14 reassigned from Person 9 to Person 1 (dist: 0.146)
+  37% | Active: 1 | Unique: 9
+  41% | Active: 0 | Unique: 9
+  46% | Active: 0 | Unique: 9
+  [NEW] Frame 615: NEW Person 10
+    [VERIFY FAIL] Track 16: Assigned Person 10 doesn't match (dist: 0.266 >= 0.25)
+  51% | Active: 1 | Unique: 10
+    [VERIFY FAIL] Track 16: Assigned Person 10 doesn't match (dist: 0.362 >= 0.25)
+  [NEW] Frame 679: NEW Person 11
+    [VERIFY FAIL] Track 17: Assigned Person 11 doesn't match (dist: 0.253 >= 0.25)
+  [NEW] Frame 712: NEW Person 12
+    [VERIFY FAIL] Track 20: Assigned Person 12 doesn't match (dist: 0.264 >= 0.25)
+    [VERIFY FAIL] Track 20: Assigned Person 12 doesn't match (dist: 0.291 >= 0.25)
+  [IDENTITY LOST] Frame 717: Track 20 lost identity of Person 12 (2 verification failures)
+    [UNMAP] Track 20 unmapped from Person 12
+  [NEW] Frame 719: NEW Person 13
+  55% | Active: 2 | Unique: 13
+    [VERIFY FAIL] Track 17: Assigned Person 11 doesn't match (dist: 0.270 >= 0.25)
+    [VERIFY FAIL] Track 17: Assigned Person 11 doesn't match (dist: 0.305 >= 0.25)
+  [IDENTITY LOST] Frame 728: Track 17 lost identity of Person 11 (2 verification failures)
+    [UNMAP] Track 17 unmapped from Person 11
+    [VERIFY FAIL] Track 20: Assigned Person 13 doesn't match (dist: 0.286 >= 0.25)
+  [NEW] Frame 734: NEW Person 14
+    [VERIFY FAIL] Track 17: Assigned Person 14 doesn't match (dist: 0.278 >= 0.25)
+    [VERIFY FAIL] Track 20: Assigned Person 13 doesn't match (dist: 0.450 >= 0.25)
+    [REASSIGN CANDIDATE] Track 20: Person 1 matches better (score diff: 0.227, dist: 0.223 vs 0.450)
+  [REASSIGNED] Frame 746: Track 20 reassigned from Person 13 to Person 1 (dist: 0.223)
+  [TENTATIVE] Frame 749: Person 1 tentative match (dist: 0.194, color: 0.764, reid: 0.834)
+  [CONFIRMED] Frame 751: Person 1 RE-ID confirmed (dist: 0.201, color: 0.777)
+  [NEW] Frame 760: NEW Person 15
+    [VERIFY FAIL] Track 24: Assigned Person 15 doesn't match (dist: 0.282 >= 0.25)
+    [VERIFY FAIL] Track 24: Assigned Person 15 doesn't match (dist: 0.262 >= 0.25)
+  [IDENTITY LOST] Frame 763: Track 24 lost identity of Person 15 (2 verification failures)
+    [UNMAP] Track 24 unmapped from Person 15
+  [TENTATIVE] Frame 765: Person 13 tentative match (dist: 0.203, color: 0.851, reid: 0.762)
+  [CONFIRMED] Frame 767: Person 13 RE-ID confirmed (dist: 0.192, color: 0.881)
+  60% | Active: 2 | Unique: 15
+    [VERIFY FAIL] Track 24: Assigned Person 13 doesn't match (dist: 0.307 >= 0.25)
+  65% | Active: 1 | Unique: 15
+  69% | Active: 0 | Unique: 15
+  [NEW] Frame 927: NEW Person 16
+    [VERIFY FAIL] Track 28: Assigned Person 16 doesn't match (dist: 0.288 >= 0.25)
+    [VERIFY FAIL] Track 28: Assigned Person 16 doesn't match (dist: 0.304 >= 0.25)
+    [REASSIGN CANDIDATE] Track 28: Person 2 matches better (score diff: 0.127, dist: 0.177 vs 0.304)
+  [REASSIGNED] Frame 930: Track 28 reassigned from Person 16 to Person 2 (dist: 0.177)
+  74% | Active: 1 | Unique: 16
+  78% | Active: 1 | Unique: 16
+    [VERIFY FAIL] Track 28: Assigned Person 2 doesn't match (dist: 0.590 >= 0.25)
+    [REASSIGN CANDIDATE] Track 28: Person 1 matches better (score diff: 0.279, dist: 0.312 vs 0.590)
+  [REASSIGNED] Frame 1073: Track 28 reassigned from Person 2 to Person 1 (dist: 0.312)
+  83% | Active: 1 | Unique: 16
+  [NEW] Frame 1091: NEW Person 17
+  [NEW] Frame 1109: NEW Person 18
+  88% | Active: 3 | Unique: 18
+    [VERIFY FAIL] Track 30: Assigned Person 17 doesn't match (dist: 0.380 >= 0.25)
+    [VERIFY FAIL] Track 31: Assigned Person 18 doesn't match (dist: 0.255 >= 0.25)
+    [VERIFY FAIL] Track 31: Assigned Person 18 doesn't match (dist: 0.265 >= 0.25)
+    [VERIFY FAIL] Track 31: Assigned Person 18 doesn't match (dist: 0.292 >= 0.25)
+  [IDENTITY LOST] Frame 1185: Track 31 lost identity of Person 18 (2 verification failures)
+    [UNMAP] Track 31 unmapped from Person 18
+  [NEW] Frame 1187: NEW Person 19
+    [VERIFY FAIL] Track 28: Assigned Person 1 doesn't match (dist: 0.326 >= 0.25)
+  [NEW] Frame 1200: NEW Person 20
+  92% | Active: 1 | Unique: 20
+    [VERIFY FAIL] Track 28: Assigned Person 1 doesn't match (dist: 0.251 >= 0.25)
+    [VERIFY FAIL] Track 33: Assigned Person 20 doesn't match (dist: 0.274 >= 0.25)
+    [VERIFY FAIL] Track 28: Assigned Person 1 doesn't match (dist: 0.476 >= 0.25)
+    [REASSIGN CANDIDATE] Track 28: Person 20 matches better (score diff: 0.280, dist: 0.196 vs 0.476)
+  [REASSIGNED] Frame 1206: Track 28 reassigned from Person 1 to Person 20 (dist: 0.196)
+  97% | Active: 1 | Unique: 20
+    [VERIFY FAIL] Track 28: Assigned Person 20 doesn't match (dist: 0.267 >= 0.25)
+    [VERIFY FAIL] Track 28: Assigned Person 20 doesn't match (dist: 0.313 >= 0.25)
+  [IDENTITY LOST] Frame 1266: Track 28 lost identity of Person 20 (2 verification failures)
+    [UNMAP] Track 28 unmapped from Person 20
+  [NEW] Frame 1268: NEW Person 21
+    [VERIFY FAIL] Track 28: Assigned Person 21 doesn't match (dist: 0.281 >= 0.25)
+
+[DONE] Saved: output_v4.mp4
+
+[SAVING EMBEDDINGS]
+  Total embeddings collected: 1483
+  Unique PIDs: 21
+    Person 1: 445 embeddings
+    Person 2: 257 embeddings
+    Person 3: 163 embeddings
+    Person 4: 99 embeddings
+    Person 5: 11 embeddings
+    Person 6: 7 embeddings
+    Person 7: 4 embeddings
+    Person 8: 13 embeddings
+    Person 9: 9 embeddings
+    Person 10: 64 embeddings
+    Person 11: 49 embeddings
+    Person 12: 5 embeddings
+    Person 13: 66 embeddings
+    Person 14: 13 embeddings
+    Person 15: 3 embeddings
+    Person 16: 3 embeddings
+    Person 17: 87 embeddings
+    Person 18: 76 embeddings
+    Person 19: 3 embeddings
+    Person 20: 104 embeddings
+    Person 21: 2 embeddings
+  ✓ Saved embeddings: output_v4_embeddings.npz
+  ✓ Saved metadata: output_v4_metadata.json
+
+============================================================
+ATTENDANCE REPORT
+============================================================
+Total unique persons: 21
+Re-identification events: 4
+ID reassignments: 6
+
+  Person 1: Frames 3-1202 (40.0s) | Features: 50 | Re-IDs: 1
+  Person 2: Frames 189-1059 (29.0s) | Features: 50 | Re-IDs: 0
+  Person 3: Frames 220-392 (5.8s) | Features: 50 | Re-IDs: 1
+  Person 4: Frames 267-367 (3.4s) | Features: 39 | Re-IDs: 1
+  Person 5: Frames 302-314 (0.4s) | Features: 6 | Re-IDs: 0
+  Person 6: Frames 319-363 (1.5s) | Features: 5 | Re-IDs: 0
+  Person 7: Frames 366-369 (0.1s) | Features: 3 | Re-IDs: 0
+  Person 8: Frames 395-407 (0.4s) | Features: 7 | Re-IDs: 0
+  Person 9: Frames 439-447 (0.3s) | Features: 6 | Re-IDs: 0
+  Person 10: Frames 615-678 (2.1s) | Features: 24 | Re-IDs: 0
+  Person 11: Frames 679-727 (1.6s) | Features: 19 | Re-IDs: 0
+  Person 12: Frames 712-716 (0.2s) | Features: 4 | Re-IDs: 0
+  Person 13: Frames 719-804 (2.9s) | Features: 29 | Re-IDs: 1
+  Person 14: Frames 734-746 (0.4s) | Features: 7 | Re-IDs: 0
+  Person 15: Frames 760-762 (0.1s) | Features: 4 | Re-IDs: 0
+  Person 16: Frames 927-929 (0.1s) | Features: 3 | Re-IDs: 0
+  Person 17: Frames 1091-1178 (2.9s) | Features: 31 | Re-IDs: 0
+  Person 18: Frames 1109-1184 (2.5s) | Features: 28 | Re-IDs: 0
+  Person 19: Frames 1187-1189 (0.1s) | Features: 4 | Re-IDs: 0
+  Person 20: Frames 1200-1265 (2.2s) | Features: 38 | Re-IDs: 0
+  Person 21: Frames 1268-1271 (0.1s) | Features: 3 | Re-IDs: 0
+============================================================
+
+Re-ID Events:
+  Frame 286: Person 4 returned (distance: 0.244)
+  Frame 374: Person 3 returned (distance: 0.200)
+  Frame 751: Person 1 returned (distance: 0.201)
+  Frame 767: Person 13 returned (distance: 0.192)
+
+ID Reassignments (BoTSORT swaps corrected):
+  Frame 362: Track 3 reassigned from Person 3 → Person 6 (dist: 0.299)
+  Frame 448: Track 14 reassigned from Person 9 → Person 1 (dist: 0.146)
+  Frame 746: Track 20 reassigned from Person 13 → Person 1 (dist: 0.223)
+  Frame 930: Track 28 reassigned from Person 16 → Person 2 (dist: 0.177)
+  Frame 1073: Track 28 reassigned from Person 2 → Person 1 (dist: 0.312)
+  Frame 1206: Track 28 reassigned from Person 1 → Person 20 (dist: 0.196)
+
+(venv) C:\Users\sarve\Documents\repo\Yolov5_StrongSORT_OSNet\Yolov5_StrongSORT_OSNet>
+(venv) C:\Users\sarve\Documents\repo\Yolov5_StrongSORT_OSNet\Yolov5_StrongSORT_OSNet>
