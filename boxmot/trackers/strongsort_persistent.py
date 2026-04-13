@@ -25,6 +25,14 @@ class PersistentTracker(Tracker):
         self.next_new_id = 1  # Track the next ID to assign
         self.frame_count = 0  # Track frame count for stats
         
+    def sync_next_id(self):
+        """Update next_new_id based on features in the metric gallery"""
+        if hasattr(self.metric, 'persistent_samples') and self.metric.persistent_samples:
+            max_id = max(self.metric.persistent_samples.keys())
+            if max_id >= self.next_new_id:
+                self.next_new_id = max_id + 1
+                print(f"  [Tracker] Synced next_new_id to {self.next_new_id}")
+        
     def update(self, detections, classes, confidences):
         """
         Enhanced update with persistent re-identification
@@ -42,7 +50,7 @@ class PersistentTracker(Tracker):
                 # Process ReID matches
                 matched_indices = set()
                 for feat_idx, matched_id, distance in reid_matches:
-                    print(f"🔄 Re-identified! Reassigning ID {matched_id} (distance: {distance:.3f})")
+                    print(f"Re-identified! Reassigning ID {matched_id} (distance: {distance:.3f})")
                     
                     # Reactivate the old ID
                     self.metric.reactivate_id(matched_id)
@@ -151,7 +159,7 @@ class StrongSORTPersistent:
                 nn_budget,
                 persistent_budget=persistent_budget
             )
-            print(f"✅ Persistent ReID enabled (threshold: {reid_threshold})")
+            print(f"Persistent ReID enabled (threshold: {reid_threshold})")
         else:
             from ..utils.matching import NearestNeighborDistanceMetric
             metric = NearestNeighborDistanceMetric("cosine", self.max_dist, nn_budget)
@@ -216,9 +224,20 @@ class StrongSORTPersistent:
         if hasattr(self.tracker.metric, 'get_stats') and hasattr(self.tracker, 'frame_count'):
             if self.tracker.frame_count % 100 == 0:  # Every 100 frames
                 stats = self.tracker.metric.get_stats()
-                print(f"📊 Gallery stats: {stats}")
+                print(f"[Gallery] Stats: {stats}")
         
         return outputs
+
+    def load_gallery(self, path):
+        """Load persistent gallery from disk"""
+        if hasattr(self.tracker.metric, 'load_gallery'):
+            self.tracker.metric.load_gallery(path)
+            self.tracker.sync_next_id()
+
+    def save_gallery(self, path):
+        """Save persistent gallery to disk"""
+        if hasattr(self.tracker.metric, 'save_gallery'):
+            self.tracker.metric.save_gallery(path)
     
     @staticmethod
     def _xywh_to_tlwh(bbox_xywh):

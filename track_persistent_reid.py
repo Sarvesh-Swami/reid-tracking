@@ -21,17 +21,18 @@ def main():
     parser = argparse.ArgumentParser(description='Track with Persistent ReID')
     parser.add_argument('--source', type=str, required=True, help='Video file path')
     parser.add_argument('--yolo-model', type=str, default='yolov8n.pt', help='YOLO model')
-    parser.add_argument('--reid-model', type=str, default='osnet_x0_25_msmt17.pt', help='ReID model')
-    parser.add_argument('--reid-threshold', type=float, default=0.4, help='ReID matching threshold (lower=stricter)')
+    parser.add_argument('--reid-model', type=str, default='osnet_x1_0_msmt17.pt', help='ReID model')
+    parser.add_argument('--reid-threshold', type=float, default=0.3, help='ReID matching threshold (lower=stricter, 0.3 = 0.7 similarity)')
+    parser.add_argument('--gallery', type=str, default='gallery.pkl', help='Path to persistent gallery file')
     parser.add_argument('--conf', type=float, default=0.5, help='Detection confidence threshold')
     parser.add_argument('--max-age', type=int, default=70, help='Max frames to keep lost tracks')
     parser.add_argument('--output', type=str, default='output_persistent_reid.mp4', help='Output video path')
     parser.add_argument('--show', action='store_true', help='Display video while processing')
     args = parser.parse_args()
     
-    print("="*80)
-    print("🚀 Persistent Re-Identification Tracker")
-    print("="*80)
+    print("=" * 80)
+    print("Persistent Re-Identification Tracker")
+    print("=" * 80)
     print(f"Video: {args.source}")
     print(f"YOLO Model: {args.yolo_model}")
     print(f"ReID Model: {args.reid_model}")
@@ -56,10 +57,15 @@ def main():
         persistent_budget=500,  # Keep 500 features per person
     )
     
+    # Load existing gallery
+    if args.gallery and Path(args.gallery).exists():
+        print(f"Loading existing gallery from {args.gallery}...")
+        tracker.load_gallery(args.gallery)
+    
     # Open video
     cap = cv2.VideoCapture(args.source)
     if not cap.isOpened():
-        print(f"❌ Error: Could not open video {args.source}")
+        print(f"Error: Could not open video {args.source}")
         return
     
     # Get video properties
@@ -77,7 +83,7 @@ def main():
     frame_idx = 0
     colors = {}  # Track ID -> color mapping
     
-    print("\n🎬 Processing video...")
+    print("\nProcessing video...")
     
     try:
         while True:
@@ -146,17 +152,21 @@ def main():
                 print(f"Progress: {progress:.1f}% ({frame_idx}/{total_frames}) | Active tracks: {len(tracks)} | Total IDs seen: {len(colors)}")
     
     finally:
+        if args.gallery:
+            print(f"Saving persistent gallery to {args.gallery}...")
+            tracker.save_gallery(args.gallery)
+            
         cap.release()
         out.release()
         cv2.destroyAllWindows()
     
-    print(f"\n✅ Done! Output saved to: {args.output}")
-    print(f"📊 Total unique IDs tracked: {len(colors)}")
+    print(f"\nDone! Output saved to: {args.output}")
+    print(f"Total unique IDs tracked: {len(colors)}")
     
     # Print gallery stats
     if hasattr(tracker.tracker.metric, 'get_stats'):
         stats = tracker.tracker.metric.get_stats()
-        print(f"📊 Final Gallery Stats:")
+        print(f"Final Gallery Stats:")
         print(f"   - Active IDs: {stats['active_ids']}")
         print(f"   - Deleted IDs (available for re-ID): {stats['deleted_ids']}")
         print(f"   - Total IDs ever seen: {stats['total_ids_ever']}")

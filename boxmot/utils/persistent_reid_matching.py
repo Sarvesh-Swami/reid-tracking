@@ -3,6 +3,8 @@ Persistent ReID Matching Module
 Extends NearestNeighborDistanceMetric to maintain a persistent gallery
 """
 import numpy as np
+import pickle
+import os
 from collections import defaultdict
 
 
@@ -53,7 +55,7 @@ class PersistentNearestNeighborDistanceMetric:
         newly_deleted = all_known_ids - set(active_targets)
         
         if newly_deleted:
-            print(f"  [Gallery Update] 📝 Newly deleted IDs: {newly_deleted}")
+            print(f"  [Gallery Update] Newly deleted IDs: {newly_deleted}")
             for track_id in newly_deleted:
                 num_features = len(self.persistent_samples.get(track_id, []))
                 print(f"  [Gallery Update]    ID {track_id}: {num_features} features saved for future re-ID")
@@ -66,7 +68,7 @@ class PersistentNearestNeighborDistanceMetric:
         # Remove from deleted set if reactivated
         reactivated = self.deleted_ids & set(active_targets)
         if reactivated:
-            print(f"  [Gallery Update] ♻️ Reactivated IDs: {reactivated}")
+            print(f"  [Gallery Update] Reactivated IDs: {reactivated}")
         self.deleted_ids = self.deleted_ids - set(active_targets)
         
         print(f"  [Gallery Update] Current state: {len(self.samples)} active, {len(self.deleted_ids)} deleted, {len(self.persistent_samples)} total")
@@ -117,12 +119,26 @@ class PersistentNearestNeighborDistanceMetric:
                 print(f"  [ReID Search] Feature {feat_idx}: Best match = ID {best_id}, distance = {best_distance:.3f} (threshold: {reid_threshold})")
                 if best_distance < reid_threshold:
                     matches.append((feat_idx, best_id, best_distance))
-                    print(f"  [ReID Search] ✅ Match accepted!")
+                    print(f"  [ReID Search] Match accepted!")
                 else:
-                    print(f"  [ReID Search] ❌ Match rejected (distance too high)")
+                    print(f"  [ReID Search] Match rejected (distance too high)")
         
         print(f"  [ReID Search] Found {len(matches)} matches")
         return matches
+    
+    def find_matching_deleted_id(self, feature, threshold=None):
+        """
+        Find a matching ID for a single feature from the deleted IDs.
+        Used by the Tracker class for persistent re-identification.
+        """
+        if threshold is None:
+            threshold = self.matching_threshold
+            
+        matches = self.find_reid_matches([feature], threshold)
+        if matches:
+            _, matched_id, distance = matches[0]
+            return matched_id, distance
+        return None, 1.0
     
     def reactivate_id(self, track_id):
         """Reactivate a deleted ID"""
@@ -154,6 +170,39 @@ class PersistentNearestNeighborDistanceMetric:
             distances[i] = 1.0 - similarities.max()
         return distances
     
+    def save_gallery(self, path):
+        """Save the persistent gallery to a file"""
+        data = {
+            'persistent_samples': self.persistent_samples,
+            'deleted_ids': self.deleted_ids
+        }
+        with open(path, 'wb') as f:
+            pickle.dump(data, f)
+        print(f"  [Gallery Save] Saved {len(self.persistent_samples)} IDs to {path}")
+
+    def load_gallery(self, path):
+        """Load the persistent gallery from a file"""
+        if not os.path.exists(path):
+            print(f"  [Gallery Load] Warning: File {path} not found")
+            return
+        
+        try:
+            with open(path, 'rb') as f:
+                data = pickle.load(f)
+            
+            loaded_samples = data.get('persistent_samples', {})
+            self.persistent_samples.update(loaded_samples)
+            
+            # When loading, we treat ALL loaded IDs as deleted initially 
+            # so they can be re-identified in the current session
+            for track_id in loaded_samples.keys():
+                if track_id not in self.samples:
+                    self.deleted_ids.add(track_id)
+                
+            print(f"  [Gallery Load] Loaded {len(loaded_samples)} IDs from {path}")
+        except Exception as e:
+            print(f"  [Gallery Load] Error loading gallery: {e}")
+
     def get_stats(self):
         """Get statistics about the gallery"""
         return {
