@@ -1,0 +1,7 @@
+datasets_dir: C:\Users\itgan\Desktop\datasets
+weights_dir: C:\Users\itgan\Desktop\reid-tracking\weights
+runs_dir: C:\Users\itgan\Desktop\reid-tracking\runs
+uuid: 003f9d40bf40e7a1de980358e2b7158a3e60877082e0df9789dfd29e7083ff35
+sync: true
+api_key: ''
+settings_version: 0.0.3

@@ -8,6 +8,7 @@ import cv2
 
 from ..utils.persistent_reid_matching import PersistentNearestNeighborDistanceMetric
 from .strongsort.sort.detection import Detection
+from .strongsort.sort import detection as detection_module
 from .strongsort.sort.tracker import Tracker
 from ..appearance.reid_multibackend import ReIDDetectMultiBackend
 from ..utils.ops import xyxy2xywh
@@ -38,68 +39,69 @@ class PersistentTracker(Tracker):
         Enhanced update with persistent re-identification
         """
         self.frame_count += 1
-        
-        # First, try to match with deleted tracks using ReID
-        if self.enable_reid and isinstance(self.metric, PersistentNearestNeighborDistanceMetric):
-            if len(detections) > 0:
-                features = [det.feature for det in detections]
-                reid_matches = self.metric.find_reid_matches(features, self.reid_threshold)
-                
-                print(f"[Frame {self.frame_count}] Checking {len(detections)} detections against {len(self.metric.deleted_ids)} deleted IDs")
-                
-                # Process ReID matches
-                matched_indices = set()
-                for feat_idx, matched_id, distance in reid_matches:
-                    print(f"Re-identified! Reassigning ID {matched_id} (distance: {distance:.3f})")
-                    
-                    # Reactivate the old ID
-                    self.metric.reactivate_id(matched_id)
-                    
-                    # Create a new track with the old ID
-                    detection = detections[feat_idx]
-                    class_id = classes[feat_idx].item()
-                    conf = confidences[feat_idx].item()
-                    
-                    # Import Track class
-                    from .strongsort.sort.track import Track, TrackState
-                    
-                    new_track = Track(
-                        detection.to_xyah(),
-                        matched_id,  # Use the old ID!
-                        class_id,
-                        conf,
-                        self.n_init,
-                        self.max_age,
-                        self.ema_alpha,
-                        detection.feature,
-                    )
-                    
-                    # Mark as confirmed immediately (it's a re-identification)
-                    new_track.state = TrackState.Confirmed
-                    new_track.hits = self.n_init  # Ensure it's confirmed
-                    
-                    self.tracks.append(new_track)
-                    matched_indices.add(feat_idx)
-                    
-                    # Update next_new_id if necessary
-                    if matched_id >= self.next_new_id:
-                        self.next_new_id = matched_id + 1
-                
-                # Filter out matched detections
-                if matched_indices:
-                    detections = [det for i, det in enumerate(detections) if i not in matched_indices]
-                    classes = classes[[i for i in range(len(classes)) if i not in matched_indices]]
-                    confidences = confidences[[i for i in range(len(confidences)) if i not in matched_indices]]
-                    print(f"  → {len(matched_indices)} detections matched to old IDs, {len(detections)} remain for new tracking")
-        
-        # Continue with normal tracking
-        if len(detections) > 0:
-            super().update(detections, classes, confidences)
-        else:
-            # No new detections, just update existing tracks
-            for track in self.tracks:
-                track.mark_missed()
-            self.tracks = [t for t in self.tracks if not t.is_deleted()]
+        matches, unmatched_tracks, unmatched_detections = self._match(detections)
+
+        for track_idx, detection_idx in matches:
+            self.tracks[track_idx].update(
+                detections[detection_idx],
+                classes[detection_idx],
+                confidences[detection_idx],
+            )
+
+        for track_idx in unmatched_tracks:
+            self.tracks[track_idx].mark_missed()
+            if (
+                self.max_unmatched_preds != 0
+                and self.tracks[track_idx].updates_wo_assignment
+                < self.tracks[track_idx].max_num_updates_wo_assignment
+            ):
+                bbox = self.tracks[track_idx].to_tlwh()
+                self.tracks[track_idx].update_kf(detection_module.to_xyah_ext(bbox))
+
+        for detection_idx in unmatched_detections:
+            detection = detections[detection_idx]
+            matched_id, distance = self.metric.find_matching_deleted_id(
+                detection.feature,
+                detection_tlwh=detection.tlwh,
+                detection_confidence=detection.confidence,
+                frame_idx=self.frame_count,
+                threshold=self.reid_threshold,
+            )
+
+            if matched_id is not None:
+                print(
+                    f"[Frame {self.frame_count}] Re-identified detection as ID {matched_id} "
+                    f"(distance: {distance:.3f})"
+                )
+                self._reactivate_track(
+                    matched_id,
+                    detection,
+                    classes[detection_idx].item(),
+                    confidences[detection_idx].item(),
+                )
+            else:
+                self._initiate_track(
+                    detection,
+                    classes[detection_idx].item(),
+                    confidences[detection_idx].item(),
+                )
+
+        self.tracks = [t for t in self.tracks if not t.is_deleted()]
+
+        active_targets = [t.track_id for t in self.tracks if t.is_confirmed()]
+        features, targets = [], []
+        for track in self.tracks:
+            if not track.is_confirmed():
+                continue
+            features += track.features
+            targets += [track.track_id for _ in track.features]
+
+        self.metric.partial_fit(
+            np.asarray(features),
+            np.asarray(targets),
+            active_targets,
+        )
+        self.metric.update_track_metadata(self.tracks, self.frame_count)
     
     def _initiate_track(self, detection, class_id, conf):
         """Override to use sequential IDs"""
@@ -118,6 +120,35 @@ class PersistentTracker(Tracker):
             )
         )
         self.next_new_id += 1
+
+    def _reactivate_track(self, track_id, detection, class_id, conf):
+        """Reactivate a deleted ID after normal track matching has failed."""
+        from .strongsort.sort.track import Track, TrackState
+
+        if any(
+            track.track_id == track_id and not track.is_deleted()
+            for track in self.tracks
+        ):
+            return
+
+        self.metric.reactivate_id(track_id)
+
+        new_track = Track(
+            detection.to_xyah(),
+            track_id,
+            class_id,
+            conf,
+            self.n_init,
+            self.max_age,
+            self.ema_alpha,
+            detection.feature,
+        )
+        new_track.state = TrackState.Confirmed
+        new_track.hits = self.n_init
+        self.tracks.append(new_track)
+
+        if track_id >= self.next_new_id:
+            self.next_new_id = track_id + 1
 
 
 class StrongSORTPersistent:
@@ -238,6 +269,16 @@ class StrongSORTPersistent:
         """Save persistent gallery to disk"""
         if hasattr(self.tracker.metric, 'save_gallery'):
             self.tracker.metric.save_gallery(path)
+
+    def get_total_unique_ids(self):
+        if hasattr(self.tracker.metric, 'total_unique_ids'):
+            return self.tracker.metric.total_unique_ids()
+        return 0
+
+    def get_stats(self):
+        if hasattr(self.tracker.metric, 'get_stats'):
+            return self.tracker.metric.get_stats()
+        return {}
     
     @staticmethod
     def _xywh_to_tlwh(bbox_xywh):

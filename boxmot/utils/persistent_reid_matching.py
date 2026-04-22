@@ -2,10 +2,10 @@
 Persistent ReID Matching Module
 Extends NearestNeighborDistanceMetric to maintain a persistent gallery
 """
-import numpy as np
-import pickle
 import os
-from collections import defaultdict
+import pickle
+
+import numpy as np
 
 
 class PersistentNearestNeighborDistanceMetric:
@@ -29,6 +29,16 @@ class PersistentNearestNeighborDistanceMetric:
         self.samples = {}  # Active track features
         self.persistent_samples = {}  # ALL track features (never deleted)
         self.deleted_ids = set()  # IDs that are currently inactive
+        self.track_metadata = {}
+        self.min_persistent_samples = 3
+        self.robust_k = 5
+        self.min_reid_confidence = 0.45
+        self.min_reid_box_height = 80.0
+        self.max_size_ratio = 1.8
+        self.min_size_ratio = 0.55
+        self.short_gap_frames = 15
+        self.short_gap_spatial_factor = 3.0
+        self.ambiguity_margin = 0.04
         
     def partial_fit(self, features, targets, active_targets):
         """
@@ -93,51 +103,91 @@ class PersistentNearestNeighborDistanceMetric:
         if reid_threshold is None:
             reid_threshold = self.matching_threshold
         
-        matches = []
+        candidates = []
         
         print(f"  [ReID Search] Searching {len(features)} features against {len(self.deleted_ids)} deleted IDs")
         print(f"  [ReID Search] Deleted IDs: {sorted(list(self.deleted_ids))}")
         print(f"  [ReID Search] Threshold: {reid_threshold}")
         
         for feat_idx, feature in enumerate(features):
-            best_id = None
-            best_distance = float('inf')
-            
-            # Search through ALL persistent samples (including deleted)
-            for track_id in self.deleted_ids:
-                if track_id not in self.persistent_samples:
-                    print(f"  [ReID Search] Warning: ID {track_id} in deleted_ids but not in persistent_samples")
-                    continue
-                
-                distance = np.min(self._metric(self.persistent_samples[track_id], [feature]))
-                
-                if distance < best_distance:
-                    best_distance = distance
-                    best_id = track_id
-            
-            if best_id is not None:
-                print(f"  [ReID Search] Feature {feat_idx}: Best match = ID {best_id}, distance = {best_distance:.3f} (threshold: {reid_threshold})")
-                if best_distance < reid_threshold:
-                    matches.append((feat_idx, best_id, best_distance))
-                    print(f"  [ReID Search] Match accepted!")
-                else:
-                    print(f"  [ReID Search] Match rejected (distance too high)")
-        
+            matched_id, distance = self.find_matching_deleted_id(
+                feature,
+                threshold=reid_threshold,
+            )
+            if matched_id is not None:
+                candidates.append((feat_idx, matched_id, distance))
+                print(f"  [ReID Search] Candidate accepted!")
+
+        # Enforce a one-to-one mapping so the same deleted ID is not reused by
+        # multiple detections in the same frame.
+        matches = []
+        used_features = set()
+        used_ids = set()
+        for feat_idx, matched_id, distance in sorted(candidates, key=lambda x: x[2]):
+            if feat_idx in used_features or matched_id in used_ids:
+                continue
+            matches.append((feat_idx, matched_id, distance))
+            used_features.add(feat_idx)
+            used_ids.add(matched_id)
+
         print(f"  [ReID Search] Found {len(matches)} matches")
         return matches
     
-    def find_matching_deleted_id(self, feature, threshold=None):
+    def find_matching_deleted_id(
+        self,
+        feature,
+        detection_tlwh=None,
+        detection_confidence=None,
+        frame_idx=None,
+        threshold=None,
+    ):
         """
         Find a matching ID for a single feature from the deleted IDs.
         Used by the Tracker class for persistent re-identification.
         """
         if threshold is None:
             threshold = self.matching_threshold
-            
-        matches = self.find_reid_matches([feature], threshold)
-        if matches:
-            _, matched_id, distance = matches[0]
-            return matched_id, distance
+
+        if len(self.deleted_ids) == 0:
+            return None, 1.0
+
+        if (
+            detection_confidence is not None
+            and detection_confidence < self.min_reid_confidence
+        ):
+            return None, 1.0
+
+        if detection_tlwh is not None and detection_tlwh[3] < self.min_reid_box_height:
+            return None, 1.0
+
+        candidates = self._collect_reid_candidates(
+            feature=feature,
+            detection_tlwh=detection_tlwh,
+            frame_idx=frame_idx,
+        )
+        if not candidates:
+            return None, 1.0
+
+        best = candidates[0]
+        print(
+            f"  [ReID Search] Best deleted-ID match = ID {best['track_id']}, "
+            f"distance = {best['distance']:.3f} (threshold: {threshold})"
+        )
+
+        if best["distance"] >= threshold:
+            return None, 1.0
+
+        if len(candidates) > 1:
+            second = candidates[1]
+            if second["distance"] - best["distance"] < self.ambiguity_margin:
+                print(
+                    f"  [ReID Search] Rejecting ambiguous match: "
+                    f"ID {best['track_id']} ({best['distance']:.3f}) vs "
+                    f"ID {second['track_id']} ({second['distance']:.3f})"
+                )
+                return None, 1.0
+
+        return best["track_id"], best["distance"]
         return None, 1.0
     
     def reactivate_id(self, track_id):
@@ -147,6 +197,34 @@ class PersistentNearestNeighborDistanceMetric:
             # Restore to active samples
             if track_id in self.persistent_samples:
                 self.samples[track_id] = self.persistent_samples[track_id].copy()
+
+    def update_track_metadata(self, tracks, frame_idx):
+        """Persist the latest geometry for confirmed active tracks."""
+        for track in tracks:
+            if not track.is_confirmed():
+                continue
+
+            tlwh = np.asarray(track.to_tlwh(), dtype=np.float32)
+            meta = self.track_metadata.setdefault(
+                int(track.track_id),
+                {
+                    "last_tlwh": tlwh,
+                    "last_frame": frame_idx,
+                    "mean_height": float(tlwh[3]),
+                    "mean_width": float(tlwh[2]),
+                    "updates": 0,
+                },
+            )
+            meta["updates"] += 1
+            alpha = 0.8
+            meta["last_tlwh"] = tlwh
+            meta["last_frame"] = frame_idx
+            meta["mean_height"] = alpha * meta["mean_height"] + (1 - alpha) * float(tlwh[3])
+            meta["mean_width"] = alpha * meta["mean_width"] + (1 - alpha) * float(tlwh[2])
+
+    def total_unique_ids(self):
+        """Return the number of stable identities stored in the gallery."""
+        return len(self.persistent_samples)
     
     @staticmethod
     def _nn_euclidean_distance(x, y):
@@ -169,12 +247,84 @@ class PersistentNearestNeighborDistanceMetric:
             # Convert to distance
             distances[i] = 1.0 - similarities.max()
         return distances
+
+    def _robust_track_distance(self, samples, feature):
+        """Use several nearest samples instead of a single best sample.
+
+        A pure min-distance rule is too optimistic and causes false matches
+        when any one stored embedding happens to look similar.
+        """
+        samples = np.asarray(samples)
+        feature = np.asarray(feature)
+
+        if self._metric == self._nn_cosine_distance:
+            samples_norm = samples / (np.linalg.norm(samples, axis=1, keepdims=True) + 1e-8)
+            feature_norm = feature / (np.linalg.norm(feature) + 1e-8)
+            distances = 1.0 - np.dot(samples_norm, feature_norm)
+        else:
+            distances = np.linalg.norm(samples - feature, axis=1)
+
+        k = min(self.robust_k, len(distances))
+        best_k = np.partition(distances, k - 1)[:k]
+        return float(best_k.mean())
+
+    def _collect_reid_candidates(self, feature, detection_tlwh=None, frame_idx=None):
+        candidates = []
+        for track_id in sorted(self.deleted_ids):
+            if track_id not in self.persistent_samples:
+                continue
+
+            sample_count = len(self.persistent_samples[track_id])
+            if sample_count < self.min_persistent_samples:
+                continue
+
+            meta = self.track_metadata.get(track_id)
+            if detection_tlwh is not None and meta is not None:
+                if not self._passes_geometry_gate(meta, detection_tlwh, frame_idx):
+                    continue
+
+            distance = self._robust_track_distance(
+                self.persistent_samples[track_id], feature
+            )
+            candidates.append({"track_id": track_id, "distance": distance})
+
+        candidates.sort(key=lambda item: item["distance"])
+        return candidates
+
+    def _passes_geometry_gate(self, meta, detection_tlwh, frame_idx):
+        det_w = float(detection_tlwh[2])
+        det_h = float(detection_tlwh[3])
+        if det_w <= 1 or det_h <= 1:
+            return False
+
+        width_ratio = det_w / max(meta["mean_width"], 1.0)
+        height_ratio = det_h / max(meta["mean_height"], 1.0)
+        if not (self.min_size_ratio <= width_ratio <= self.max_size_ratio):
+            return False
+        if not (self.min_size_ratio <= height_ratio <= self.max_size_ratio):
+            return False
+
+        if frame_idx is None:
+            return True
+
+        frame_gap = frame_idx - meta.get("last_frame", frame_idx)
+        if frame_gap <= self.short_gap_frames:
+            prev = np.asarray(meta["last_tlwh"], dtype=np.float32)
+            prev_center = prev[:2] + prev[2:] / 2
+            det_center = np.asarray(detection_tlwh[:2], dtype=np.float32) + np.asarray(detection_tlwh[2:], dtype=np.float32) / 2
+            center_distance = float(np.linalg.norm(det_center - prev_center))
+            spatial_limit = self.short_gap_spatial_factor * max(det_h, prev[3], 1.0)
+            if center_distance > spatial_limit:
+                return False
+
+        return True
     
     def save_gallery(self, path):
         """Save the persistent gallery to a file"""
         data = {
             'persistent_samples': self.persistent_samples,
-            'deleted_ids': self.deleted_ids
+            'deleted_ids': self.deleted_ids,
+            'track_metadata': self.track_metadata,
         }
         with open(path, 'wb') as f:
             pickle.dump(data, f)
@@ -192,6 +342,7 @@ class PersistentNearestNeighborDistanceMetric:
             
             loaded_samples = data.get('persistent_samples', {})
             self.persistent_samples.update(loaded_samples)
+            self.track_metadata.update(data.get('track_metadata', {}))
             
             # When loading, we treat ALL loaded IDs as deleted initially 
             # so they can be re-identified in the current session
@@ -209,5 +360,6 @@ class PersistentNearestNeighborDistanceMetric:
             'active_ids': len(self.samples),
             'deleted_ids': len(self.deleted_ids),
             'total_ids_ever': len(self.persistent_samples),
-            'total_features': sum(len(v) for v in self.persistent_samples.values())
+            'total_features': sum(len(v) for v in self.persistent_samples.values()),
+            'metadata_ids': len(self.track_metadata),
         }
