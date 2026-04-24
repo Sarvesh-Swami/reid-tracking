@@ -176,14 +176,14 @@ class AttendanceTracker:
         self.verify_fail_count = defaultdict(int)  # tid → consecutive update rejections
         self.last_verified_frame = {}  # tid → last frame we verified this track
 
-        # v3 tuning: AGGRESSIVE re-verification
+        # v3 tuning: BALANCED re-verification (optimized for similar clothing)
         self.confirmation_frames = 3   
         self.min_new_frames = 3        
         self.update_interval = 3       # gallery update frequency
-        self.verify_interval = 1       # VERIFY EVERY FRAME
-        self.max_verify_fails = 2      # faster unmapping
-        self.max_confirm_fails = 2     # stricter confirmation
-        self.reassignment_threshold = 0.10  # easier reassignment (was 0.15)
+        self.verify_interval = 3       # Verify every 3 frames (was 1 - too aggressive)
+        self.max_verify_fails = 3      # Allow 3 strikes (was 2 - too strict)
+        self.max_confirm_fails = 3     # Allow 3 confirmation failures
+        self.reassignment_threshold = 0.08  # Easier reassignment (was 0.10)
 
         self.colors = {}
         self.appearance_log = defaultdict(list)
@@ -731,11 +731,11 @@ def main():
     parser.add_argument('--output', type=str, default='output_attendance.mp4')
     parser.add_argument('--yolo-model', type=str, default='yolov8n.pt')
     parser.add_argument('--reid-model', type=str, default='osnet_x1_0_msmt17.pt')
-    parser.add_argument('--reid-threshold', type=float, default=0.35,
+    parser.add_argument('--reid-threshold', type=float, default=0.42,
                         help='Gallery matching threshold (lower=stricter)')
     parser.add_argument('--detection-conf', type=float, default=0.25)
     parser.add_argument('--track-buffer', type=float, default=5.0)
-    parser.add_argument('--color-weight', type=float, default=0.55,
+    parser.add_argument('--color-weight', type=float, default=0.35,
                         help='Weight for color in combined score (0-1)')
     parser.add_argument('--show', action='store_true')
     args = parser.parse_args()
