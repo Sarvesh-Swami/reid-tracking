@@ -1,0 +1,51 @@
+{
+  "merge_candidates": [
+    {
+      "from_pid": 6,
+      "to_pid": 2,
+      "distance": 0.4002623405514682,
+      "min_distance": 0.11791962385177612,
+      "reason": "Low distance (0.400) + No overlap"
+    },
+    {
+      "from_pid": 11,
+      "to_pid": 3,
+      "distance": 0.40796109170677664,
+      "min_distance": 0.12910938262939453,
+      "reason": "Low distance (0.408) + No overlap"
+    },
+    {
+      "from_pid": 12,
+      "to_pid": 4,
+      "distance": 0.4196204511448058,
+      "min_distance": 0.1684931516647339,
+      "reason": "Low distance (0.420) + No overlap"
+    },
+    {
+      "from_pid": 12,
+      "to_pid": 5,
+      "distance": 0.39718664199214193,
+      "min_distance": 0.22126179933547974,
+      "reason": "Low distance (0.397) + No overlap"
+    },
+    {
+      "from_pid": 11,
+      "to_pid": 7,
+      "distance": 0.3944646265375851,
+      "min_distance": 0.18973761796951294,
+      "reason": "Low distance (0.394) + No overlap"
+    }
+  ],
+  "merge_map": {
+    "6": 2,
+    "11": 3,
+    "12": 4,
+    "5": 4,
+    "7": 3
+  },
+  "summary": {
+    "total_merges": 5,
+    "original_pids": 8,
+    "final_pids": 3
+  }
+}

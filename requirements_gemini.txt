@@ -1,0 +1,14 @@
+# Gemini Person Tracking Requirements
+# Install with: pip install -r requirements_gemini.txt
+
+# Core dependencies (already installed for your current system)
+opencv-python>=4.8.0
+numpy>=1.24.0
+torch>=1.13.0
+ultralytics>=8.0.0
+
+# NEW: Gemini API
+google-generativeai>=0.8.0
+
+# Image processing
+Pillow>=10.0.0
